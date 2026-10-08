@@ -46,9 +46,8 @@ def compute_official_metrics():
     skip_traces = pd.read_csv(SKIP_TRACES_PATH)
     accounts = pd.read_csv(ACCOUNTS_PATH)
 
-    # -------------------------------------------------------------
     # Metric 1: Right-party contact rate per 1,000 dial attempts
-    # -------------------------------------------------------------
+    
     # Historical baseline rate across all dial attempts
     total_raw_attempts = len(raw_dial)
     raw_rpcs = raw_dial["disposition"].isin(RPC_DISPOSITIONS).sum()
@@ -65,9 +64,7 @@ def compute_official_metrics():
     print(f"   • Model Policy Dialler       : {model_rpc_per_1000:.1f} RPCs / 1,000 dials")
     print(f"   • Relative Improvement       : +{((model_rpc_per_1000 - baseline_rpc_per_1000) / baseline_rpc_per_1000) * 100:.1f}%")
 
-    # -------------------------------------------------------------
     # Metric 2: AUC and Calibration of contact point predictions
-    # -------------------------------------------------------------
     y_active = test_policy["target_active_line"].values
     p_active = test_policy["prob_active"].values
     y_rpc = test_policy["target_rpc"].values
@@ -82,9 +79,9 @@ def compute_official_metrics():
     print(f"   • Line Liveness P(Active)  : AUC = {auc_active:.4f} | Brier Score = {brier_active:.4f}")
     print(f"   • Borrower RPC P(RPC|Act)  : AUC = {auc_rpc:.4f} | Brier Score = {brier_rpc:.4f}")
 
-    # -------------------------------------------------------------
+
     # Metric 3: Attempts spent on invalid contact points before action
-    # -------------------------------------------------------------
+
     # Historical: accounts waited until 15 failed calls before trigger
     dead_numbers = raw_dial[
         raw_dial["network_response"].isin(["number_does_not_exist", "switched_off"]) |
@@ -112,9 +109,8 @@ def compute_official_metrics():
     print(f"   * Model Earliest Cutoff      : {model_attempts_on_invalid:.1f} attempts per invalid number")
     print(f"   * Wasted Effort Reduction    : -{wasted_reduction:.1f}%")
 
-    # -------------------------------------------------------------
     # Metric 4: Skip-Trace Hit Rate and Recovery Comparison
-    # -------------------------------------------------------------
+
     # Historical baseline rule (15_consecutive_failed_contacts)
     baseline_total_traces = len(skip_traces)
     baseline_hits = skip_traces["result"].isin(["new_phone_found", "new_address_found"]).sum()
@@ -130,9 +126,8 @@ def compute_official_metrics():
     print(f"   * VoI Optimizer Expected Hit Rate   : {voi_expected_hit_rate:.1f}%")
     print(f"   * VoI Projected Net Recovery Value  : INR {voi_expected_net_recovery:,.2f}")
 
-    # -------------------------------------------------------------
     # Metric 5: Third-party disclosure incidents
-    # -------------------------------------------------------------
+
     # Number of third-party / recycled numbers scheduled for direct collections dialling
     suppressed_count = test_policy["prescribed_action"].isin(
         [
@@ -170,9 +165,9 @@ def generate_all_plots():
     skip_traces = pd.read_csv(SKIP_TRACES_PATH)
     voi_queue = pd.read_csv(os.path.join(OUTPUT_DIR, "skip_trace_priority_queue.csv"))
 
-    # -------------------------------------------------------------
+
     # Plot 1: Reliability Calibration Curves (Liveness & RPC)
-    # -------------------------------------------------------------
+
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
     # Liveness calibration
@@ -203,9 +198,8 @@ def generate_all_plots():
     plt.close()
     print(f"  Saved: {p1_path}")
 
-    # -------------------------------------------------------------
+
     # Plot 2: ROC Curves
-    # -------------------------------------------------------------
     fig, ax = plt.subplots(figsize=(7, 6))
     fpr_act, tpr_act, _ = roc_curve(test_policy["target_active_line"], test_policy["prob_active"])
     auc_act = roc_auc_score(test_policy["target_active_line"], test_policy["prob_active"])
@@ -227,9 +221,8 @@ def generate_all_plots():
     plt.close()
     print(f"  Saved: {p2_path}")
 
-    # -------------------------------------------------------------
     # Plot 3: RPC Rate per 1,000 Dial Attempts Comparison
-    # -------------------------------------------------------------
+  
     raw_rpcs = raw_dial["disposition"].isin(RPC_DISPOSITIONS).sum()
     base_rate = (raw_rpcs / len(raw_dial)) * 1000
 
@@ -257,9 +250,9 @@ def generate_all_plots():
     plt.close()
     print(f"  Saved: {p3_path}")
 
-    # -------------------------------------------------------------
+
     # Plot 4: Attempts Spent on Invalid Numbers Before Cutoff
-    # -------------------------------------------------------------
+
     dead_numbers = raw_dial[
         raw_dial["network_response"].isin(["number_does_not_exist", "switched_off"]) |
         raw_dial["disposition"].isin(["invalid_number", "wrong_number"])
@@ -294,9 +287,9 @@ def generate_all_plots():
     plt.close()
     print(f"  Saved: {p4_path}")
 
-    # -------------------------------------------------------------
+  
     # Plot 5: Prescribed Operational Action Distribution
-    # -------------------------------------------------------------
+   
     fig, ax = plt.subplots(figsize=(10, 5))
     action_counts = test_policy["prescribed_action"].value_counts()
     colors = ["#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#17becf", "#8c564b", "#7f7f7f"]

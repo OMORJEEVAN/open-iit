@@ -62,16 +62,10 @@ class PolicyEngine:
                 action = ACTION_FPC_THIRD_PARTY
                 reason = "Contact is a reference/relative; enforce Fair Practices Code"
 
-            # 3. Invalid from the start / Dead line
-            elif pa < self.liveness_dead_threshold or row.get("flag_invalid", 0) == 1:
-                state = "Invalid from the start"
-                action = ACTION_TRIGGER_TRACE
-                reason = f"Line dead / unassigned (P_active={pa:.2f}); escalate to Skip-Trace"
-
-            # 4. Switched off long-term
-            elif consec_switched_off >= self.switched_off_streak_threshold:
+            # 3. Switched off long-term (Persistent multi-attempt / multi-day switch-off)
+            elif (consec_switched_off >= self.switched_off_streak_threshold) and (row.get("flag_invalid", 0) == 0):
                 state = "Switched off long-term"
-                # Check if account has another available phone on file
+                # Check if account has another available phone on file to cascade
                 acc_id = row.get("account_id")
                 has_alternate_number = False
                 if account_phones_map and acc_id in account_phones_map:
@@ -81,10 +75,16 @@ class PolicyEngine:
 
                 if has_alternate_number:
                     action = ACTION_MOVE_NUMBER
-                    reason = f"Persistent switch-off ({consec_switched_off} streak); cascade to alternate phone"
+                    reason = f"Persistent switch-off ({consec_switched_off} streak); cascade to alternate phone on file"
                 else:
                     action = ACTION_TRIGGER_TRACE
-                    reason = f"Persistent switch-off ({consec_switched_off} streak) and no alternate phone; trigger trace"
+                    reason = f"Persistent switch-off ({consec_switched_off} streak) and no alternate phone; trigger Skip-Trace"
+
+            # 4. Invalid from the start / Dead line (Unassigned, does not exist, or instant network drop)
+            elif pa < self.liveness_dead_threshold or row.get("flag_invalid", 0) == 1:
+                state = "Invalid from the start"
+                action = ACTION_TRIGGER_TRACE
+                reason = f"Line dead / unassigned (P_active={pa:.2f}); escalate to Skip-Trace"
 
             # 5. Temporarily unreachable
             elif (consec_switched_off > 0) or (row.get("flag_not_reachable", 0) == 1):

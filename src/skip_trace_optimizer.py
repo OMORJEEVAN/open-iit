@@ -54,10 +54,13 @@ class SkipTraceOptimizer:
         self.hit_model.fit(X, y)
         print("SkipTraceOptimizer: Hit probability model fitted successfully.")
 
-    def optimize_queue(self, accounts_df, policy_df=None):
+    def optimize_queue(self, accounts_df, policy_df=None, account_ids_filter=None, address_policy_df=None):
         """
         Calculates Expected Net Value of Trace (ENVT) and ranks accounts.
         """
+        if account_ids_filter is not None:
+            accounts_df = accounts_df[accounts_df["account_id"].isin(account_ids_filter)].copy()
+
         features = [
             "dpd_start",
             "emi_amount",
@@ -90,18 +93,36 @@ class SkipTraceOptimizer:
             - COST_SKIP_TRACE
         )
 
-        # Filter: If policy_df is provided, exclude accounts that already have a reachable number!
+        # Multi-channel reachability screening:
+        # Accounts with active reachable phones (or avoiding phones where WhatsApp/field can be used,
+        # or alternate backup numbers) do NOT need an immediate skip trace!
+        reachable_accounts = set()
         if policy_df is not None:
-            reachable_accounts = set(
+            phone_reachable = set(
                 policy_df[
                     policy_df["prescribed_action"].isin(
-                        ["Keep dialling, at the best time slot", "Switch channel (WhatsApp, field) instead of redialling"]
+                        [
+                            "Keep dialling, at the best time slot",
+                            "Switch channel (WhatsApp, field) instead of redialling",
+                            "Move to another number on file",
+                        ]
                     )
                 ]["account_id"].unique()
             )
-            acc_queue["has_reachable_channel"] = acc_queue["account_id"].isin(reachable_accounts)
-        else:
-            acc_queue["has_reachable_channel"] = False
+            reachable_accounts.update(phone_reachable)
+
+        # Accounts with confirmed valid addresses do not need skip trace
+        if address_policy_df is not None:
+            addr_reachable = set(
+                address_policy_df[
+                    address_policy_df["prescribed_action"].isin(
+                        ["Visit", "Change the visit time"]
+                    )
+                ]["account_id"].unique()
+            )
+            reachable_accounts.update(addr_reachable)
+
+        acc_queue["has_reachable_channel"] = acc_queue["account_id"].isin(reachable_accounts)
 
         # Eligible accounts for skip-trace are those without valid reachable channels
         # and with positive expected net value of trace

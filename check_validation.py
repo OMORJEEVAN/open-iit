@@ -58,9 +58,8 @@ def main():
     pred_active_binary = (p_active_val >= 0.50).astype(int)
     pred_rpc_binary = (p_rpc_val >= 0.50).astype(int)
 
-    # -------------------------------------------------------------
     # MODEL 1: LINE LIVENESS VALIDATION METRICS
-    # -------------------------------------------------------------
+   
     acc_active = accuracy_score(y_active_val, pred_active_binary)
     bal_acc_active = balanced_accuracy_score(y_active_val, pred_active_binary)
     auc_active = roc_auc_score(y_active_val, p_active_val)
@@ -80,9 +79,8 @@ def main():
     print("\n  Detailed Classification Report:")
     print(classification_report(y_active_val, pred_active_binary, target_names=["Dead/Invalid", "Active Line"], digits=4))
 
-    # -------------------------------------------------------------
     # MODEL 2: BORROWER RPC VALIDATION METRICS
-    # -------------------------------------------------------------
+   
     # At standard 0.5 threshold and optimal threshold for imbalanced RPC
     acc_rpc = accuracy_score(y_rpc_val, pred_rpc_binary)
     bal_acc_rpc = balanced_accuracy_score(y_rpc_val, pred_rpc_binary)

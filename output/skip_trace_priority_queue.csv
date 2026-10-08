@@ -1,0 +1,7 @@
+account_id,lender_id,portfolio,income_type,town_id,preferred_language,bucket_start,dpd_start,emi_amount,overdue_start,outstanding,salary_credit_day,bureau_score_band,other_active_loans,paid_other_lenders_30d,last_bounce_reason,ability_to_pay_estimate,prev_ptp_count,prev_ptp_broken,dialling_arm,prob_trace_hit,expected_recovery_gross,expected_net_value_trace,has_reachable_channel
+AC001205,L03,pl_salaried,salaried,T2,hinglish,X,0,12750.0,12750.0,140250.0,10.0,550-649,2,False,insufficient_funds,0.5,1,1,rule_based,0.227266885161622,42075.0,4214.01438692886,False
+AC000967,L01,credit_card,salaried,T2,hinglish,31-60,44,8450.0,16900.0,92950.0,,300-549,3,False,insufficient_funds,0.76,0,0,rule_based,0.1996816289890466,42385.2,3719.595601461942,False
+AC000093,L06,mfi_jlg,daily_wage,T3,english,1-30,15,1350.0,1350.0,63450.0,,300-549,2,False,insufficient_funds,,0,0,rule_based,0.24470740260213944,19035.0,2007.1024338392758,False
+AC001394,L02,two_wheeler,salaried,T3,english,1-30,9,2850.0,2850.0,45600.0,7.0,550-649,2,False,insufficient_funds,,1,1,rule_based,0.25441164386375775,13680.0,1477.1580796252927,False
+AC000312,L03,pl_salaried,salaried,T2,hinglish,1-30,25,3550.0,3550.0,31950.0,7.0,650-699,2,False,technical,0.48,0,0,rule_based,0.1846603688708952,9201.6,675.6268825910934,False
+AC000585,L02,two_wheeler,self_employed,T2,hinglish,90+,104,2550.0,10200.0,33150.0,,300-549,1,True,stop_payment,,3,2,rule_based,0.14957264957264957,9945.0,580.375,False

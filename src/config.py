@@ -60,7 +60,7 @@ NETWORK_DEAD_RESPONSES = [
     "number_does_not_exist",
 ]
 
-# Next-Best-Action codes
+# Next-Best-Action codes (Phone)
 ACTION_DIAL_BEST_SLOT = "Keep dialling, at the best time slot"
 ACTION_SWITCH_CHANNEL = "Switch channel (WhatsApp, field) instead of redialling"
 ACTION_RETRY_BACKOFF = "Retry later, with backoff"
@@ -68,3 +68,10 @@ ACTION_MOVE_NUMBER = "Move to another number on file"
 ACTION_STOP_SUPPRESS = "Stop at once; suppress to avoid third-party disclosure"
 ACTION_FPC_THIRD_PARTY = "Use only within Fair Practices Code rules, never discuss debt"
 ACTION_TRIGGER_TRACE = "Trigger Skip-Trace"
+
+# Next-Best-Action codes (Address / Field Visits - Problem Statement 2 Table)
+ACTION_ADDR_VISIT = "Visit"
+ACTION_ADDR_CHANGE_TIME = "Change the visit time"
+ACTION_ADDR_TRACE_NEW = "Trace the new address"
+ACTION_ADDR_RESOLVE_LOC = "Resolve the location (Problem Statement 3) before writing it off"
+ACTION_ADDR_FABRICATED = "Trace, and flag to the origination team"
