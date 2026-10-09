@@ -95,7 +95,7 @@ flowchart TD
     subgraph Output_Layer ["5. Optimization & Execution Queues"]
         O1[test_predictions_with_policy.csv]
         O2[address_field_predictions.csv]
-        O3[skip_trace_priority_queue.csv<br/>Value-of-Information E[Net Recovery] - Cost]
+        O3["skip_trace_priority_queue.csv<br/>Value-of-Information E[Net Recovery] - Cost"]
         O4[verified_audit_comparison.csv<br/>Full 250 Ground Truth Verification]
     end
 
