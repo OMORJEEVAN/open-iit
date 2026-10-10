@@ -7,9 +7,9 @@ def build_notebook():
     nb = nbf.v4.new_notebook()
     cells = []
 
-    # ----------------------------------------------------
-    # Title & Overview
-    # ----------------------------------------------------
+                                                          
+                      
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""# CreditNirvana PS2: Right-Party Contact (RPC) Prediction & Skip-Trace Optimizer
 
 ## Problem Statement 2 Overview
@@ -26,9 +26,9 @@ This notebook implements an autonomous, end-to-end collections optimization syst
 6. **Regulatory Compliance:** Enforces zero third-party disclosure under the RBI Fair Practices Code and DPDP Act.
 """))
 
-    # ----------------------------------------------------
-    # Cell 1: Environment Setup & Imports
-    # ----------------------------------------------------
+                                                          
+                                         
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 1. Setup & Environment Imports
 Importing necessary numerical computing, machine learning, probability calibration, and visualization libraries.
 """))
@@ -58,9 +58,9 @@ plt.rcParams["font.sans-serif"] = "DejaVu Sans"
 plt.rcParams["font.size"] = 10
 """))
 
-    # ----------------------------------------------------
-    # Cell 2: System Configurations & Constants
-    # ----------------------------------------------------
+                                                          
+                                               
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 2. Operational Configurations & Constants
 Defining dataset paths, cost constants (INR), and categorical disposition groups according to the CreditNirvana problem statement.
 """))
@@ -113,9 +113,9 @@ ACTION_ADDR_RESOLVE_LOC = "Resolve the location (Problem Statement 3) before wri
 ACTION_ADDR_FABRICATED = "Trace, and flag to the origination team"
 """))
 
-    # ----------------------------------------------------
-    # Cell 3: Pre-Contact Feature Engineering
-    # ----------------------------------------------------
+                                                          
+                                             
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 3. Pre-Contact Feature Engineering (Strict No-Leakage Pipeline)
 Constructs historical features strictly prior to the current attempt ($0 \\dots k-1$). 
 Extracts telephony physics (ring duration, customer decline, unbroken switched-off streaks), entity graph collisions (shared numbers), borrower credit distress, and cross-channel field visit corroboration.
@@ -250,9 +250,9 @@ feature_df = load_and_preprocess_data()
 print(f"Feature engineering complete. Dataset shape: {feature_df.shape}")
 """))
 
-    # ----------------------------------------------------
-    # Cell 4: Train / Validation / Test Partitioning
-    # ----------------------------------------------------
+                                                          
+                                                    
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 4. Partitioning by Official Challenge Splits
 Splitting dial attempts strictly according to `shared/splits.csv` (Train: 35,834 | Val: 7,864 | Test: 7,407) to ensure out-of-sample evaluation.
 """))
@@ -267,9 +267,9 @@ test_df = feature_df[feature_df["split"] == "test"].copy().reset_index(drop=True
 print(f"Train attempts: {len(train_df):,} | Val attempts: {len(val_df):,} | Test attempts: {len(test_df):,}")
 """))
 
-    # ----------------------------------------------------
-    # Cell 5: Calibrated Model Training & IPW Debiasing
-    # ----------------------------------------------------
+                                                          
+                                                       
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 5. Hierarchical Model Training with Isotonic Calibration & IPW
 Training two decoupled models:
 - **Model 1: Line Liveness $P(\\text{Active})$:** LightGBM + Isotonic Calibration.
@@ -326,9 +326,9 @@ model_rpc.fit(X_train, y_rpc_train, sample_weight=ipw_weights)
 print("Model 1 (Liveness) and Model 2 (RPC) trained and calibrated successfully.")
 """))
 
-    # ----------------------------------------------------
-    # Cell 6: Performance Evaluation
-    # ----------------------------------------------------
+                                                          
+                                    
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 6. Out-of-Sample Performance Evaluation
 Computing Accuracy, Confusion Matrix, Classification Report, ROC-AUC, and Brier Score on both Validation and Test splits to verify generalization and probability calibration.
 """))
@@ -367,9 +367,9 @@ print("\\nClassification Report (Test Set):")
 print(classification_report(test_df['target_rpc'], pred_rpc_binary_test, target_names=["No RPC", "Right-Party Contact"], digits=4))
 """))
 
-    # ----------------------------------------------------
-    # Cell 7: Telephony Policy Engine Execution
-    # ----------------------------------------------------
+                                                          
+                                               
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 7. Telephony Policy Engine (State-to-Action Mapping)
 Executes the next-best-action rules mapping probabilities to table actions:
 - Resolves avoiding borrowers vs dead lines.
@@ -441,9 +441,9 @@ for act, cnt in test_policy["prescribed_action"].value_counts().items():
     print(f"  • {act:<55}: {cnt:>5} ({cnt/len(test_policy)*100:>5.1f}%)")
 """))
 
-    # ----------------------------------------------------
-    # Cell 8: Field & Address Policy Engine
-    # ----------------------------------------------------
+                                                          
+                                           
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 8. Field & Address Policy Engine (PS2 Field Scope)
 Evaluates address validity across all 3,117 physical addresses in `shared/addresses.csv` and maps them into the 5 states defined in the problem statement.
 """))
@@ -510,9 +510,9 @@ for act, cnt in merged_addr["prescribed_action"].value_counts().items():
     print(f"  • {act:<55}: {cnt:>5} ({cnt/len(merged_addr)*100:>5.1f}%)")
 """))
 
-    # ----------------------------------------------------
-    # Cell 9: Ground Truth Audit Validation
-    # ----------------------------------------------------
+                                                          
+                                           
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 9. Ground Truth Audit Validation (250 Contacts)
 Cross-tabulates model predictions against post-campaign ground truth audit records from `verified_contact_points.csv`.
 """))
@@ -531,9 +531,9 @@ print("Audit Matrix across all audited contact points (250 contacts):")
 print(pd.crosstab(audit_merged["verified_status"], audit_merged["predicted_state"], margins=True))
 """))
 
-    # ----------------------------------------------------
-    # Cell 10: Skip-Trace VoI Optimizer
-    # ----------------------------------------------------
+                                                          
+                                       
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 10. Value-of-Information (VoI) Skip-Trace Optimization
 Replaces the crude 15-attempt heuristic with an economic Expected Net Value of Trace ($\text{ENVT}$) framework:
 $$\\mathbb{E}[\\text{Net Value}] = P(\\text{Hit}) \\times P(\\text{RPC} \\mid \\text{Found}) \\times (\\text{Outstanding} \\times \\text{Ability} \\times \\eta) - C_{\\text{trace}}$$
@@ -580,9 +580,9 @@ print("Top Accounts in Queue Ranked by Expected Net Recovery Value:")
 print(portfolio_queue[["account_id", "portfolio", "outstanding", "ability_to_pay_estimate", "prob_trace_hit", "expected_net_value_trace"]].head(5).to_string(index=False))
 """))
 
-    # ----------------------------------------------------
-    # Cell 11: Official Benchmark Metrics
-    # ----------------------------------------------------
+                                                          
+                                         
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 11. Official Competition Metrics (Page 7 Benchmark)
 Computes and reports all 5 official Key Metrics mandated by Problem Statement 2.
 """))
@@ -622,9 +622,9 @@ print(f"5. Third-Party Disclosure Incidents    : 0 Incidents (Target: ZERO) | {s
 print("=" * 70)
 """))
 
-    # ----------------------------------------------------
-    # Cell 12: Visual Performance Plots
-    # ----------------------------------------------------
+                                                          
+                                       
+                                                          
     cells.append(nbf.v4.new_markdown_cell("""### 12. Visual Diagnostics & Decision Charts
 Generating publication-ready figures: Calibration Curves, ROC Curves, RPC Lift, Wasted Attempt Reduction, and Prescribed Action Distributions.
 """))

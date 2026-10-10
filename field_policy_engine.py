@@ -13,10 +13,7 @@ from src.config import (
 
 
 class FieldPolicyEngine:
-    """
-    Evaluates address health and prescribes field collection actions mandated by
-    Problem Statement 2 (Addresses table, page 5).
-    """
+    
 
     def __init__(self):
         pass
@@ -27,7 +24,7 @@ class FieldPolicyEngine:
         if field_visits_df is None:
             field_visits_df = pd.read_csv(FIELD_VISITS_PATH)
 
-        # Summarize past field visits per address_id
+                                                    
         fv_summary = (
             field_visits_df.sort_values(["address_id", "start_ts"])
             .groupby("address_id")
@@ -63,7 +60,7 @@ class FieldPolicyEngine:
             text_len = row["address_text_len"]
 
             if v_count == 0:
-                # Never tested address
+                                      
                 if text_len < 18:
                     state = "Fabricated or incomplete at origination"
                     action = ACTION_ADDR_FABRICATED
@@ -74,7 +71,7 @@ class FieldPolicyEngine:
                     reason = "Unvisited address with complete description; schedule initial field visit"
 
             else:
-                # Evaluated based on historical field visits
+                                                            
                 if last_out in ["met_borrower", "cash_collected"] or row["met_borrower_count"] > 0:
                     state = "Valid and occupied"
                     action = ACTION_ADDR_VISIT

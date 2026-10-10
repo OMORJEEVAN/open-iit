@@ -6,7 +6,7 @@ from sklearn.metrics import roc_auc_score, brier_score_loss, log_loss
 
 
 FEATURE_COLS = [
-    # Telephony historical dynamics
+                                   
     "prior_attempts",
     "prior_rpc_count",
     "prior_rpc_rate",
@@ -18,16 +18,16 @@ FEATURE_COLS = [
     "prior_ring_duration_mean",
     "hours_since_last_attempt",
     "consecutive_switched_off",
-    # Temporal & scheduling
+                           
     "attempt_hour",
     "day_of_week",
     "is_weekend",
     "diurnal_slot",
-    # Phone entity features
+                           
     "priority_slot",
     "accounts_sharing_phone",
     "phone_age_days",
-    # Account financial & credit distress
+                                         
     "dpd_start",
     "emi_amount",
     "overdue_start",
@@ -38,7 +38,7 @@ FEATURE_COLS = [
     "prev_ptp_count",
     "prev_ptp_broken",
     "prev_ptp_broken_rate",
-    # Cross-channel corroboration
+                                 
     "has_field_visit",
     "total_field_met_borrower",
     "total_field_met_family",
@@ -61,7 +61,7 @@ CATEGORICAL_COLS = [
 
 
 def prepare_feature_matrix(df):
-    """Encodes categorical columns and prepares feature matrix X."""
+    
     X = df[FEATURE_COLS].copy()
     
     for cat in CATEGORICAL_COLS:
@@ -72,15 +72,10 @@ def prepare_feature_matrix(df):
 
 
 class ContactHealthPredictor:
-    """
-    Decoupled hierarchical model suite estimating:
-    1. Line Liveness P(Active)
-    2. Borrower Responsiveness P(RPC | Active)
-    3. Counterfactual debiasing using Inverse Propensity Weighting (IPW)
-    """
+    
 
     def __init__(self):
-        # Base estimators
+                         
         self.liveness_model = None
         self.rpc_model = None
 
@@ -89,11 +84,11 @@ class ContactHealthPredictor:
         y_liveness_train = train_df["target_active_line"].values
         y_rpc_train = train_df["target_rpc"].values
 
-        # Compute IPW sample weights to eliminate counterfactual selection bias:
-        # Inverse of selection_propensity on random arm, clipped to avoid high variance
+                                                                                
+                                                                                       
         propensities = train_df["selection_propensity"].fillna(1.0).values
         ipw_weights = 1.0 / np.clip(propensities, 0.20, 1.0)
-        # Normalize weights
+                           
         ipw_weights = ipw_weights / np.mean(ipw_weights)
 
         print("Training Model 1: Line Liveness P(Active) with Isotonic Calibration...")
@@ -112,7 +107,7 @@ class ContactHealthPredictor:
         self.liveness_model.fit(X_train, y_liveness_train)
 
         print("Training Model 2: Borrower RPC P(RPC | Active) with IPW Debiasing...")
-        # Train on instances where line is active or attempted
+                                                              
         base_lgbm_rpc = LGBMClassifier(
             n_estimators=150,
             learning_rate=0.04,
@@ -127,12 +122,12 @@ class ContactHealthPredictor:
         )
         self.rpc_model.fit(X_train, y_rpc_train, sample_weight=ipw_weights)
 
-        # Evaluate on validation split if provided
+                                                  
         if val_df is not None:
             self.evaluate(val_df, split_name="Validation")
 
     def predict_probabilities(self, df):
-        """Outputs calibrated P(Active) and P(RPC | Active)."""
+        
         X = prepare_feature_matrix(df)
         p_active = self.liveness_model.predict_proba(X)[:, 1]
         p_rpc = self.rpc_model.predict_proba(X)[:, 1]
@@ -140,7 +135,7 @@ class ContactHealthPredictor:
         return p_active, p_rpc
 
     def evaluate(self, df, split_name="Evaluation"):
-        """Computes AUC, Brier calibration score, and log-loss."""
+        
         p_active, p_rpc = self.predict_probabilities(df)
         y_active = df["target_active_line"].values
         y_rpc = df["target_rpc"].values
