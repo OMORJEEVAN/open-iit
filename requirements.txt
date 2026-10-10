@@ -1,0 +1,10 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+lightgbm
+nbformat
+nbclient
+jupyter
+ipykernel
