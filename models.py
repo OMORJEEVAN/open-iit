@@ -61,7 +61,7 @@ CATEGORICAL_COLS = [
 
 
 def prepare_feature_matrix(df):
-    """Encodes categorical columns and prepares feature matrix X."""
+    
     X = df[FEATURE_COLS].copy()
     
     for cat in CATEGORICAL_COLS:
@@ -72,12 +72,7 @@ def prepare_feature_matrix(df):
 
 
 class ContactHealthPredictor:
-    """
-    Decoupled hierarchical model suite estimating:
-    1. Line Liveness P(Active)
-    2. Borrower Responsiveness P(RPC | Active)
-    3. Counterfactual debiasing using Inverse Propensity Weighting (IPW)
-    """
+    
 
     def __init__(self):
                          
@@ -132,7 +127,7 @@ class ContactHealthPredictor:
             self.evaluate(val_df, split_name="Validation")
 
     def predict_probabilities(self, df):
-        """Outputs calibrated P(Active) and P(RPC | Active)."""
+        
         X = prepare_feature_matrix(df)
         p_active = self.liveness_model.predict_proba(X)[:, 1]
         p_rpc = self.rpc_model.predict_proba(X)[:, 1]
@@ -140,7 +135,7 @@ class ContactHealthPredictor:
         return p_active, p_rpc
 
     def evaluate(self, df, split_name="Evaluation"):
-        """Computes AUC, Brier calibration score, and log-loss."""
+        
         p_active, p_rpc = self.predict_probabilities(df)
         y_active = df["target_active_line"].values
         y_rpc = df["target_rpc"].values

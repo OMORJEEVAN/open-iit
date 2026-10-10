@@ -12,10 +12,7 @@ from src.config import (
 
 
 class PolicyEngine:
-    """
-    Translates predicted probabilities and multi-channel telemetry into
-    operational actions mandated by the CreditNirvana state-to-action table.
-    """
+    
 
     def __init__(
         self,
@@ -30,9 +27,7 @@ class PolicyEngine:
         self.switched_off_streak_threshold = switched_off_streak_threshold
 
     def prescribe_actions(self, df, p_active, p_rpc, account_phones_map=None):
-        """
-        Determines the latent state and assigns next-best-action for each row.
-        """
+        
         states = []
         actions = []
         reason_codes = []

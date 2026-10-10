@@ -6,10 +6,7 @@ from src.config import SKIP_TRACES_PATH, ACCOUNTS_PATH, COST_SKIP_TRACE
 
 
 class SkipTraceOptimizer:
-    """
-    Ranks accounts for skip-tracing using an Expected Value-of-Information (VoI)
-    economic framework instead of fixed attempt heuristics.
-    """
+    
 
     def __init__(self):
         self.hit_model = None
@@ -55,9 +52,7 @@ class SkipTraceOptimizer:
         print("SkipTraceOptimizer: Hit probability model fitted successfully.")
 
     def optimize_queue(self, accounts_df, policy_df=None, account_ids_filter=None, address_policy_df=None):
-        """
-        Calculates Expected Net Value of Trace (ENVT) and ranks accounts.
-        """
+        
         if account_ids_filter is not None:
             accounts_df = accounts_df[accounts_df["account_id"].isin(account_ids_filter)].copy()
 

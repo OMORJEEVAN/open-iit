@@ -13,7 +13,7 @@ from src.config import (
 
 
 def load_raw_data():
-    """Loads all relevant raw dataframes."""
+    
     accounts = pd.read_csv(ACCOUNTS_PATH)
     phones = pd.read_csv(PHONES_PATH)
     dial_attempts = pd.read_csv(DIAL_ATTEMPTS_PATH)
@@ -29,10 +29,7 @@ def load_raw_data():
 
 
 def compute_telephony_features(dial_attempts, phones):
-    """
-    Computes strict pre-attempt historical features without data leakage.
-    Every feature for attempt k is calculated strictly using attempts 0 .. k-1.
-    """
+    
     df = dial_attempts.sort_values(["phone_id", "attempt_ts"]).copy().reset_index(drop=True)
 
                                        
@@ -149,9 +146,7 @@ def compute_telephony_features(dial_attempts, phones):
 
 
 def add_account_and_cross_channel_features(df, accounts, field_visits, payments):
-    """
-    Merges account financial features and cross-channel corroboration (field visits & payments).
-    """
+    
                                    
     acc_copy = accounts.copy()
     acc_copy["prev_ptp_broken_rate"] = np.where(
@@ -210,7 +205,7 @@ def add_account_and_cross_channel_features(df, accounts, field_visits, payments)
 
 
 def build_feature_dataset():
-    """Builds the complete feature engineered dataset ready for modeling."""
+    
     print("Loading raw datasets...")
     accounts, phones, dial_attempts, field_visits, payments = load_raw_data()
 

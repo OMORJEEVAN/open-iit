@@ -34,9 +34,7 @@ from src.config import (
 
 
 def compute_official_metrics():
-    """
-    Computes all 5 official Key Metrics from Problem Statement 2 (Page 7 of document).
-    """
+    
     print("\n" + "=" * 70)
     print("        OFFICIAL KEY METRICS (PROBLEM STATEMENT 2 - PAGE 7)")
     print("=" * 70)
@@ -156,9 +154,7 @@ def compute_official_metrics():
 
 
 def generate_all_plots():
-    """
-    Generates and saves the 5 required visual plots and charts.
-    """
+    
     print("Generating performance plots...")
     test_policy = pd.read_csv(os.path.join(OUTPUT_DIR, "test_predictions_with_policy.csv"))
     raw_dial = pd.read_csv(DIAL_ATTEMPTS_PATH)

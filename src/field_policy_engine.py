@@ -13,10 +13,7 @@ from src.config import (
 
 
 class FieldPolicyEngine:
-    """
-    Evaluates address health and prescribes field collection actions mandated by
-    Problem Statement 2 (Addresses table, page 5).
-    """
+    
 
     def __init__(self):
         pass
