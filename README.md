@@ -248,24 +248,52 @@ Under the **RBI Fair Practices Code** and **Digital Personal Data Protection (DP
 
 ```text
 open iit/
-├── src/
-│   ├── config.py                 # Central configurations, file paths, and action codes
-│   ├── feature_engineering.py    # Strict leakage-free pre-contact telemetry & history extraction
-│   ├── models.py                 # Calibrated LightGBM models with IPW counterfactual debiasing
-│   ├── policy_engine.py          # State-to-action mapper & multi-number cascading logic
-│   ├── field_policy_engine.py    # Field visit & address state-to-action engine (PS2 Field Scope)
-│   └── skip_trace_optimizer.py   # Value-of-Information (VoI) economic ranking model
-├── run_pipeline.py               # Main end-to-end orchestration runner
-├── generate_metrics_and_plots.py # Computes competition metrics and exports plots
-├── check_validation.py           # Evaluates model performance on the validation split
-├── shared/                       # Official challenge datasets (accounts, dial_attempts, etc.)
-└── output/                       # Generated competition deliverables
-    ├── test_predictions_with_policy.csv      # Dial attempt decisions with action reasons
-    ├── address_field_predictions.csv         # Address classifications and visit schedules
-    ├── test_skip_trace_priority_queue.csv    # Prioritized test skip-trace queue
-    ├── skip_trace_priority_queue.csv         # Portfolio-wide VoI ranked skip-trace queue
-    ├── verified_audit_comparison.csv         # 250-contact ground-truth audit matrix
-    └── plots/                                # 5 high-resolution diagnostic charts
+├── CreditNirvana_PS2_Solution.ipynb   # Primary submission notebook (executed with outputs & plots)
+├── CreditNirvana_PS2_Project_Report.pdf # Official project report document (ready to upload)
+├── PPT.pptx                            # Presentation slide deck
+├──  EDA.ipynb                           # Exploratory data analysis notebook
+├── README.md                           # Comprehensive project documentation & guide
+│
+├──  Pipeline Execution Scripts:
+│   ├── run_pipeline.py                    # End-to-end model training, policy engine, & queue runner
+│   ├── generate_metrics_and_plots.py      # Computes official competition metrics & generates plots
+│   └── check_validation.py                # Standalone script for validation accuracy & confusion matrix
+│
+├──  src/                                # Modular core architecture package
+│   ├── config.py                          # File paths, operational costs, dispositions & action constants
+│   ├── feature_engineering.py             # Strict leakage-free pre-contact telemetry & history extraction
+│   ├── models.py                          # Calibrated LightGBM models with IPW counterfactual debiasing
+│   ├── policy_engine.py                   # State-to-action mapper & multi-number cascading logic
+│   ├── field_policy_engine.py             # Field visit & address state-to-action engine (PS2 Field scope)
+│   └── skip_trace_optimizer.py            # Value-of-Information (VoI) economic ranking model
+│
+├──  shared/                             # Official challenge multi-channel datasets
+│   ├── accounts.csv                       # Borrower accounts, loan balances, DPD & financial distress
+│   ├── addresses.csv                      # Borrower residential/KYC address descriptions
+│   ├── dial_attempts.csv                  # 51,105 dial records with telephony physics & random arm
+│   ├── field_visits.csv                   # 5,578 field visit logs, outcomes, dwell times & GPS
+│   ├── payments.csv                       # Collections payments & transaction realizations
+│   ├── splits.csv                         # Official Train (70%), Validation (15%), Test (15%) splits
+│   ├── lenders.csv                        # Participating financial institutions metadata
+│   └── agents.csv                         # Tele-calling and field collector profiles
+│
+├──  Contact Point Ground Truth & Lineage:
+│   ├── phones.csv                         # Phone metadata, priority slots, sources & relation lineage
+│   ├── skip_traces.csv                    # Historical 15-attempt heuristic trace outcomes & costs
+│   └── verified_contact_points.csv        # 250-contact post-campaign ground truth audit labels
+│
+└──  output/                             # Generated competition deliverables & diagnostic artifacts
+    ├── test_predictions_with_policy.csv   # Test dial attempts with predicted states & action reasons
+    ├── address_field_predictions.csv      # 3,117 address classifications & visit schedules
+    ├── test_skip_trace_priority_queue.csv # Test split prioritized skip-trace queue
+    ├── skip_trace_priority_queue.csv      # Portfolio-wide VoI-ranked skip-trace queue
+    ├── verified_audit_comparison.csv      # 250-contact ground-truth audit matrix
+    └── plots/                             # 5 publication-ready diagnostic charts
+        ├── plot1_calibration_curves.png   # Line liveness & borrower RPC reliability diagrams
+        ├── plot2_roc_curves.png           # Out-of-sample ROC curves with AUC scores
+        ├── plot3_rpc_rate_comparison.png  # +38.2% RPC lift comparison chart
+        ├── plot4_wasted_attempts_reduction.png # -62.4% dead line dialler wastage reduction
+        └── plot5_action_distribution.png  # Prescribed operational action distributions
 ```
 
 ---
