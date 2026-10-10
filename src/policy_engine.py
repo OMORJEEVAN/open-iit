@@ -50,22 +50,22 @@ class PolicyEngine:
             prior_rejected = row.get("prior_call_rejected_count", 0)
             prior_attempts = row.get("prior_attempts", 0)
 
-            # 1. Recycled Number (Risk of disclosure to stranger)
+                                                                 
             if wrong_number_count > 0 or (shared_count > 2 and "self" not in relation):
                 state = "Recycled to a new subscriber"
                 action = ACTION_STOP_SUPPRESS
                 reason = "Recycled / stranger detected; halt dialling immediately"
 
-            # 2. Third Party (Reference, Relative, Employer)
+                                                            
             elif relation != "self" and "self" not in relation:
                 state = "Third party (relative, employer, reference)"
                 action = ACTION_FPC_THIRD_PARTY
                 reason = "Contact is a reference/relative; enforce Fair Practices Code"
 
-            # 3. Switched off long-term (Persistent multi-attempt / multi-day switch-off)
+                                                                                         
             elif (consec_switched_off >= self.switched_off_streak_threshold) and (row.get("flag_invalid", 0) == 0):
                 state = "Switched off long-term"
-                # Check if account has another available phone on file to cascade
+                                                                                 
                 acc_id = row.get("account_id")
                 has_alternate_number = False
                 if account_phones_map and acc_id in account_phones_map:
@@ -80,20 +80,20 @@ class PolicyEngine:
                     action = ACTION_TRIGGER_TRACE
                     reason = f"Persistent switch-off ({consec_switched_off} streak) and no alternate phone; trigger Skip-Trace"
 
-            # 4. Invalid from the start / Dead line (Unassigned, does not exist, or instant network drop)
+                                                                                                         
             elif pa < self.liveness_dead_threshold or row.get("flag_invalid", 0) == 1:
                 state = "Invalid from the start"
                 action = ACTION_TRIGGER_TRACE
                 reason = f"Line dead / unassigned (P_active={pa:.2f}); escalate to Skip-Trace"
 
-            # 5. Temporarily unreachable
+                                        
             elif (consec_switched_off > 0) or (row.get("flag_not_reachable", 0) == 1):
                 state = "Temporarily unreachable"
                 action = ACTION_RETRY_BACKOFF
                 reason = "Transient network unavailability; retry later with backoff"
 
-            # 6. Valid, but borrower avoiding (THE CENTRAL PROBLEM)
-            # Line is alive (high P_active), but borrower actively declines or won't pick up
+                                                                   
+                                                                                            
             elif (
                 (pa >= self.liveness_active_threshold) and
                 (
@@ -105,14 +105,14 @@ class PolicyEngine:
                 action = ACTION_SWITCH_CHANNEL
                 reason = f"Line alive (P_active={pa:.2f}) but borrower avoiding (P_rpc={prpc:.2f}); switch to WhatsApp/field"
 
-            # 7. Valid and reachable
+                                    
             elif pa >= self.liveness_active_threshold:
                 state = "Valid and reachable"
                 action = ACTION_DIAL_BEST_SLOT
                 reason = f"High contactability (P_active={pa:.2f}, P_rpc={prpc:.2f}); dial at optimal diurnal window"
 
             else:
-                # Default fallback
+                                  
                 state = "Temporarily unreachable"
                 action = ACTION_RETRY_BACKOFF
                 reason = "Uncertain state; backoff before next contact attempt"

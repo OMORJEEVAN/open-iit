@@ -17,7 +17,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-# Project paths
+               
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 
@@ -31,7 +31,7 @@ def main():
     print("        VALIDATION ACCURACY & EVALUATION METRICS REPORT")
     print("=" * 70)
 
-    # 1. Load feature dataset
+                             
     print("\n[1/3] Loading feature dataset and splitting...")
     full_df = build_feature_dataset()
     splits_df = pd.read_csv(SPLITS_PATH)
@@ -43,12 +43,12 @@ def main():
     print(f"      Train samples      : {len(train_df):,}")
     print(f"      Validation samples : {len(val_df):,}")
 
-    # 2. Train models on train set
+                                  
     print("\n[2/3] Training calibrated models on Train split...")
     model_suite = ContactHealthPredictor()
     model_suite.fit(train_df, val_df=None)
 
-    # 3. Predict probabilities on Validation split
+                                                  
     print("\n[3/3] Evaluating strictly on Validation split...")
     p_active_val, p_rpc_val = model_suite.predict_probabilities(val_df)
 
@@ -58,7 +58,7 @@ def main():
     pred_active_binary = (p_active_val >= 0.50).astype(int)
     pred_rpc_binary = (p_rpc_val >= 0.50).astype(int)
 
-    # MODEL 1: LINE LIVENESS VALIDATION METRICS
+                                               
    
     acc_active = accuracy_score(y_active_val, pred_active_binary)
     bal_acc_active = balanced_accuracy_score(y_active_val, pred_active_binary)
@@ -79,16 +79,16 @@ def main():
     print("\n  Detailed Classification Report:")
     print(classification_report(y_active_val, pred_active_binary, target_names=["Dead/Invalid", "Active Line"], digits=4))
 
-    # MODEL 2: BORROWER RPC VALIDATION METRICS
+                                              
    
-    # At standard 0.5 threshold and optimal threshold for imbalanced RPC
+                                                                        
     acc_rpc = accuracy_score(y_rpc_val, pred_rpc_binary)
     bal_acc_rpc = balanced_accuracy_score(y_rpc_val, pred_rpc_binary)
     auc_rpc = roc_auc_score(y_rpc_val, p_rpc_val)
     brier_rpc = brier_score_loss(y_rpc_val, p_rpc_val)
     cm_rpc = confusion_matrix(y_rpc_val, pred_rpc_binary)
 
-    # Optimal threshold based on empirical RPC prior rate (~16%)
+                                                                
     opt_thresh = float(np.percentile(p_rpc_val, 80))
     pred_rpc_opt = (p_rpc_val >= opt_thresh).astype(int)
     acc_rpc_opt = accuracy_score(y_rpc_val, pred_rpc_opt)

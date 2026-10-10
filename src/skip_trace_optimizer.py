@@ -18,7 +18,7 @@ class SkipTraceOptimizer:
         skip_traces = pd.read_csv(SKIP_TRACES_PATH)
         accounts = pd.read_csv(ACCOUNTS_PATH)
 
-        # Binary target: was a new contact point found?
+                                                       
         skip_traces["target_hit"] = skip_traces["result"].isin(
             ["new_phone_found", "new_address_found"]
         ).astype(int)
@@ -77,14 +77,14 @@ class SkipTraceOptimizer:
         acc_queue = accounts_df.copy()
         acc_queue["prob_trace_hit"] = p_hit
 
-        # Prob of RPC on newly discovered contact (empirically ~45%)
+                                                                    
         p_rpc_given_found = 0.45
 
-        # Expected recovery value: Outstanding * Ability to pay * historical keep rate
+                                                                                      
         expected_recovery = (
             acc_queue["outstanding"].fillna(0) *
             acc_queue["ability_to_pay_estimate"].fillna(0.5) *
-            0.60  # baseline collections realization rate
+            0.60                                         
         )
 
         acc_queue["expected_recovery_gross"] = expected_recovery
@@ -93,9 +93,9 @@ class SkipTraceOptimizer:
             - COST_SKIP_TRACE
         )
 
-        # Multi-channel reachability screening:
-        # Accounts with active reachable phones (or avoiding phones where WhatsApp/field can be used,
-        # or alternate backup numbers) do NOT need an immediate skip trace!
+                                               
+                                                                                                     
+                                                                           
         reachable_accounts = set()
         if policy_df is not None:
             phone_reachable = set(
@@ -111,7 +111,7 @@ class SkipTraceOptimizer:
             )
             reachable_accounts.update(phone_reachable)
 
-        # Accounts with confirmed valid addresses do not need skip trace
+                                                                        
         if address_policy_df is not None:
             addr_reachable = set(
                 address_policy_df[
@@ -124,8 +124,8 @@ class SkipTraceOptimizer:
 
         acc_queue["has_reachable_channel"] = acc_queue["account_id"].isin(reachable_accounts)
 
-        # Eligible accounts for skip-trace are those without valid reachable channels
-        # and with positive expected net value of trace
+                                                                                     
+                                                       
         eligible_queue = acc_queue[
             (~acc_queue["has_reachable_channel"]) &
             (acc_queue["expected_net_value_trace"] > 0)

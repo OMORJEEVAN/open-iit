@@ -9,7 +9,7 @@ except Exception:
 import pandas as pd
 import numpy as np
 
-# Add project root to path
+                          
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from src.config import (
@@ -31,10 +31,10 @@ def main():
     print("  CREDITNIRVANA PS2: RIGHT-PARTY CONTACT & SKIP-TRACE OPTIMIZER      ")
     print("======================================================================\n")
 
-    # Step 1: Feature Engineering
+                                 
     full_df = build_feature_dataset()
 
-    # Step 2: Split according to shared/splits.csv
+                                                  
     splits_df = pd.read_csv(SPLITS_PATH)
     full_df = full_df.merge(splits_df, on="account_id", how="left")
 
@@ -45,24 +45,24 @@ def main():
     print(f"\nDataset Splits:")
     print(f"Train attempts: {len(train_df):,} | Val attempts: {len(val_df):,} | Test attempts: {len(test_df):,}")
 
-    # Step 3: Train Contact Health Model Suite
+                                              
     print("\n--- Training Hierarchical ML Models ---")
     model_suite = ContactHealthPredictor()
     model_suite.fit(train_df, val_df)
 
-    # Step 4: Evaluate on Unseen Test Split
+                                           
     print("\n--- Evaluating on Out-Of-Sample Test Split ---")
     test_metrics = model_suite.evaluate(test_df, split_name="Test Set")
 
-    # Predict probabilities for test set and full set
+                                                     
     p_active_test, p_rpc_test = model_suite.predict_probabilities(test_df)
     p_active_full, p_rpc_full = model_suite.predict_probabilities(full_df)
 
-    # Prepare account-phones map for cascading
+                                              
     phones_df = pd.read_csv(PHONES_PATH)
     acc_phones_map = phones_df.groupby("account_id")["phone_id"].unique().to_dict()
 
-    # Step 5: Run Telephony Policy Engine (Next Best Action)
+                                                            
     print("\n--- Applying Telephony Policy Engine (State-to-Action Mapping) ---")
     engine = PolicyEngine()
     test_policy = engine.prescribe_actions(test_df, p_active_test, p_rpc_test, acc_phones_map)
@@ -78,7 +78,7 @@ def main():
     for action, count in action_counts.items():
         print(f"  • {action:<55}: {count:>5} ({count/len(test_policy)*100:>5.1f}%)")
 
-    # Step 6: Run Address & Field Visit Policy Engine (Problem Statement 2 - Field Channel)
+                                                                                           
     print("\n--- Applying Address & Field Visit Policy Engine (PS2 - Field Channel) ---")
     field_engine = FieldPolicyEngine()
     address_policy = field_engine.evaluate_addresses()
@@ -93,7 +93,7 @@ def main():
     for action, count in addr_action_counts.items():
         print(f"  • {action:<55}: {count:>5} ({count/len(address_policy)*100:>5.1f}%)")
 
-    # Step 7: Ground Truth Validation Against verified_contact_points.csv (Full 250 records)
+                                                                                            
     print("\n--- Ground Truth Validation Against verified_contact_points.csv (Full Audit) ---")
     vcp_df = pd.read_csv(VERIFIED_CONTACTS_PATH)
     latest_full_preds = (
@@ -112,13 +112,13 @@ def main():
     print(crosstab)
     merged_vcp.to_csv(os.path.join(OUTPUT_DIR, "verified_audit_comparison.csv"), index=False)
 
-    # Step 8: Value-of-Information (VoI) Skip-Trace Optimization
+                                                                
     print("\n--- Optimizing Skip-Trace Queue via Value-of-Information (VoI) ---")
     accounts_df = pd.read_csv(ACCOUNTS_PATH)
     optimizer = SkipTraceOptimizer()
     optimizer.fit()
 
-    # 8A. Test Split Queue (clean, realistic queue of test accounts needing trace)
+                                                                                  
     test_account_ids = test_df["account_id"].unique()
     test_trace_queue = optimizer.optimize_queue(
         accounts_df,
@@ -142,7 +142,7 @@ def main():
             ].head(5).to_string(index=False)
         )
 
-    # 8B. Portfolio-Wide Queue (Multi-channel screened)
+                                                       
     full_trace_queue = optimizer.optimize_queue(
         accounts_df,
         policy_df=full_policy,
@@ -150,7 +150,7 @@ def main():
     )
     print(f"\nPortfolio-Wide Skip-Trace Queue (All Accounts): {len(full_trace_queue)} accounts eligible for tracing.")
 
-    # Save outputs
+                  
     test_policy.to_csv(os.path.join(OUTPUT_DIR, "test_predictions_with_policy.csv"), index=False)
     test_trace_queue.to_csv(os.path.join(OUTPUT_DIR, "test_skip_trace_priority_queue.csv"), index=False)
     full_trace_queue.to_csv(os.path.join(OUTPUT_DIR, "skip_trace_priority_queue.csv"), index=False)
